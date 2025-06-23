@@ -624,6 +624,69 @@
         footer p {
             margin-bottom: 0;
         }
+
+        /* Estilos para Preencher Lacunas */
+        .fill-gaps-container {
+            margin-top: 30px;
+        }
+
+        .fill-gaps-exercise {
+            margin: 20px 0;
+        }
+
+        .fill-gaps-exercise p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .gap-input {
+            padding: 8px 12px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            margin: 0 5px;
+            min-width: 120px;
+            transition: var(--transition);
+        }
+
+        .gap-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 86, 63, 0.2);
+        }
+
+        .gap-input.correct {
+            border-color: #28a745;
+            background-color: rgba(40, 167, 69, 0.1);
+        }
+
+        .gap-input.incorrect {
+            border-color: #dc3545;
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+
+        .gaps-feedback {
+            margin-top: 20px;
+        }
+
+        .gap-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: var(--radius);
+        }
+
+        .gap-result.correct {
+            background-color: rgba(40, 167, 69, 0.1);
+            border: 1px solid #28a745;
+            color: #155724;
+        }
+
+        .gap-result.incorrect {
+            background-color: rgba(220, 53, 69, 0.1);
+            border: 1px solid #dc3545;
+            color: #721c24;
+        }
         
         @media (max-width: 768px) {
             .nav-container {
@@ -653,6 +716,11 @@
             
             .verb-list {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .gap-input {
+                min-width: 100px;
+                margin: 2px;
             }
         }
         
@@ -1080,6 +1148,103 @@
                         vos: 'correis',
                         eles: 'correm'
                     }
+                },
+                'ler': {
+                    type: 'VTD',
+                    examples: [
+                        'Eu <strong>leio</strong> um livro todas as noites.',
+                        'Ela <strong>leu</strong> o jornal de manhã.',
+                        'Nós <strong>lemos</strong> muitos romances.'
+                    ],
+                    conjugation: {
+                        eu: 'leio',
+                        tu: 'lês',
+                        ele: 'lê',
+                        nos: 'lemos',
+                        vos: 'ledes',
+                        eles: 'leem'
+                    }
+                },
+                'fazer': {
+                    type: 'VTD',
+                    examples: [
+                        'Eu <strong>faço</strong> exercício todas as manhãs.',
+                        'Ela <strong>fez</strong> um bolo delicioso.',
+                        'Nós <strong>fazemos</strong> os deveres juntos.'
+                    ],
+                    conjugation: {
+                        eu: 'faço',
+                        tu: 'fazes',
+                        ele: 'faz',
+                        nos: 'fazemos',
+                        vos: 'fazeis',
+                        eles: 'fazem'
+                    }
+                },
+                'precisar': {
+                    type: 'VTI',
+                    prep: 'de',
+                    examples: [
+                        'Eu <strong>preciso</strong> de ajuda.',
+                        'Ela <strong>precisa</strong> de dinheiro.',
+                        'Nós <strong>precisamos</strong> de tempo.'
+                    ],
+                    conjugation: {
+                        eu: 'preciso',
+                        tu: 'precisas',
+                        ele: 'precisa',
+                        nos: 'precisamos',
+                        vos: 'precisais',
+                        eles: 'precisam'
+                    }
+                },
+                'oferecer': {
+                    type: 'VTDI',
+                    examples: [
+                        'Eu <strong>ofereço</strong> ajuda aos necessitados.',
+                        'Ela <strong>ofereceu</strong> flores à professora.',
+                        'Nós <strong>oferecemos</strong> apoio aos amigos.'
+                    ],
+                    conjugation: {
+                        eu: 'ofereço',
+                        tu: 'ofereces',
+                        ele: 'oferece',
+                        nos: 'oferecemos',
+                        vos: 'ofereceis',
+                        eles: 'oferecem'
+                    }
+                },
+                'dormir': {
+                    type: 'VI',
+                    examples: [
+                        'Eu <strong>durmo</strong> oito horas por noite.',
+                        'O bebé <strong>dormiu</strong> profundamente.',
+                        'Nós <strong>dormimos</strong> cedo aos domingos.'
+                    ],
+                    conjugation: {
+                        eu: 'durmo',
+                        tu: 'dormes',
+                        ele: 'dorme',
+                        nos: 'dormimos',
+                        vos: 'dormis',
+                        eles: 'dormem'
+                    }
+                },
+                'nascer': {
+                    type: 'VI',
+                    examples: [
+                        'O sol <strong>nasce</strong> todos os dias.',
+                        'O bebé <strong>nasceu</strong> no hospital.',
+                        'As flores <strong>nascem</strong> na primavera.'
+                    ],
+                    conjugation: {
+                        eu: 'nasço',
+                        tu: 'nasces',
+                        ele: 'nasce',
+                        nos: 'nascemos',
+                        vos: 'nasceis',
+                        eles: 'nascem'
+                    }
                 }
             };
             
@@ -1356,7 +1521,72 @@
             }
             
             // ======================================
-            // Exercícios
+            // Funcionalidade Preencher Lacunas - CORRIGIDO
+            // ======================================
+            const checkGapsBtn = document.getElementById('check-gaps');
+            const gapsFeedback = document.getElementById('gaps-feedback');
+            
+            if (checkGapsBtn && gapsFeedback) {
+                checkGapsBtn.addEventListener('click', function() {
+                    const gapInputs = document.querySelectorAll('.gap-input');
+                    let correctCount = 0;
+                    let totalGaps = gapInputs.length;
+                    
+                    // Limpar feedback anterior
+                    gapsFeedback.innerHTML = '';
+                    
+                    gapInputs.forEach(input => {
+                        const userAnswer = input.value.toLowerCase().trim();
+                        const correctAnswers = input.getAttribute('data-answer').toLowerCase().split('|'); // Permitir múltiplas respostas corretas
+                        
+                        // Remover classes anteriores
+                        input.classList.remove('correct', 'incorrect');
+                        
+                        // Verificar se a resposta está correta
+                        let isCorrect = false;
+                        for (let answer of correctAnswers) {
+                            if (userAnswer === answer.trim() || userAnswer.includes(answer.trim())) {
+                                isCorrect = true;
+                                break;
+                            }
+                        }
+                        
+                        if (isCorrect) {
+                            input.classList.add('correct');
+                            correctCount++;
+                        } else {
+                            input.classList.add('incorrect');
+                        }
+                    });
+                    
+                    // Mostrar feedback geral
+                    const resultDiv = document.createElement('div');
+                    resultDiv.classList.add('gap-result');
+                    
+                    if (correctCount === totalGaps) {
+                        resultDiv.classList.add('correct');
+                        resultDiv.innerHTML = `<strong>Parabéns!</strong> Você acertou todas as ${totalGaps} lacunas!`;
+                    } else {
+                        resultDiv.classList.add('incorrect');
+                        resultDiv.innerHTML = `Você acertou ${correctCount} de ${totalGaps} lacunas. Continue praticando!`;
+                    }
+                    
+                    gapsFeedback.appendChild(resultDiv);
+                    
+                    // Adicionar dicas para respostas incorretas
+                    gapInputs.forEach((input, index) => {
+                        if (input.classList.contains('incorrect')) {
+                            const hintDiv = document.createElement('div');
+                            hintDiv.classList.add('gap-result', 'incorrect');
+                            hintDiv.innerHTML = `<strong>Lacuna ${index + 1}:</strong> Resposta esperada: "${input.getAttribute('data-answer')}"`;
+                            gapsFeedback.appendChild(hintDiv);
+                        }
+                    });
+                });
+            }
+            
+            // ======================================
+            // Exercícios - CORRIGIDO
             // ======================================
             const exercises = document.querySelectorAll('.exercise');
             const nextBtns = document.querySelectorAll('.next-btn');
@@ -2415,232 +2645,6 @@
             </div>
         </div>
         
-        <!-- Quiz -->
-        <div id="quiz" class="tab-content">
-            <div class="card">
-                <h2>Quiz de Verbos Transitivos e Intransitivos</h2>
-                <p>Teste os seus conhecimentos num quiz rápido. Responda o mais rápido possível para ganhar mais pontos!</p>
-                
-                <div class="quiz-container">
-                    <div class="quiz-header">
-                        <div class="timer">Tempo: <span id="quiz-timer">60</span>s</div>
-                        <div class="quiz-score">Pontuação: <span id="current-score">0</span></div>
-                    </div>
-                    
-                    <div class="question-container">
-                        <h3 id="quiz-question">Aguardando início...</h3>
-                        
-                        <div class="quiz-options" id="quiz-options">
-                            <!-- As opções serão inseridas pelo JavaScript -->
-                        </div>
-                    </div>
-                    
-                    <div id="quiz-feedback" class="feedback"></div>
-                    
-                    <div class="quiz-controls">
-                        <button class="btn btn-primary" id="start-quiz">Iniciar Quiz</button>
-                        <button class="btn btn-primary" id="next-question" style="display: none;">Próxima Pergunta</button>
-                    </div>
-                    
-                    <div class="quiz-results" id="quiz-results" style="display: none;">
-                        <h3>Resultados do Quiz</h3>
-                        <p>Pontuação final: <span id="final-score">0</span></p>
-                        <p>Acertos: <span id="correct-answers">0</span>/<span id="total-questions">0</span></p>
-                        <button class="btn btn-primary" id="restart-quiz">Tentar Novamente</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Jogo -->
-        <div id="jogo" class="tab-content">
-            <div class="card">
-                <h2>Jogo da Memória: Verbos e Transitividade</h2>
-                <p>Encontre os pares correspondentes de verbos e suas classificações quanto à transitividade.</p>
-                
-                <div class="game-container">
-                    <div class="game-header">
-                        <div class="score">Tentativas: <span id="attempt-count">0</span></div>
-                        <div class="score">Pares encontrados: <span id="pair-count">0</span>/8</div>
-                    </div>
-                    
-                    <div class="game-board" id="memory-game">
-                        <!-- As cartas serão geradas pelo JavaScript -->
-                    </div>
-                    
-                    <div class="game-controls">
-                        <button class="btn btn-primary" id="start-game">Iniciar Jogo</button>
-                        <button class="btn btn-primary" id="restart-game" style="display: none;">Reiniciar Jogo</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h2>Preencher Lacunas: Complementos Verbais</h2>
-                <p>Complete as frases com complementos adequados para os verbos, respeitando a sua transitividade.</p>
-                
-                <div class="fill-gaps-container">
-                    <div class="fill-gaps-exercise">
-                        <p>1. O professor explicou <input type="text" class="gap-input" data-answer="a matéria" placeholder="objeto direto"> <input type="text" class="gap-input" data-answer="aos alunos" placeholder="objeto indireto">.</p>
-                        
-                        <p>2. A menina gosta <input type="text" class="gap-input" data-answer="de chocolate" placeholder="objeto indireto">.</p>
-                        
-                        <p>3. O atleta <input type="text" class="gap-input" data-answer="correu" placeholder="verbo intransitivo"> rapidamente.</p>
-                        
-                        <p>4. Nós compramos <input type="text" class="gap-input" data-answer="um presente" placeholder="objeto direto"> para o aniversário.</p>
-                        
-                        <p>5. Ela <input type="text" class="gap-input" data-answer="ofereceu" placeholder="VTDI"> flores à mãe.</p>
-                    </div>
-                    
-                    <button class="btn btn-primary" id="check-gaps">Verificar Respostas</button>
-                    <div id="gaps-feedback"></div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Dicionário -->
-        <div id="dicionario" class="tab-content">
-            <div class="card">
-                <h2>Dicionário de Verbos Transitivos e Intransitivos</h2>
-                <p>Consulte a transitividade de diversos verbos comuns em português europeu.</p>
-                
-                <div class="dictionary-container">
-                    <div class="dictionary-filters">
-                        <h3>Filtrar por tipo:</h3>
-                        <label class="custom-control checkbox">
-                            <input type="checkbox" checked data-filter="VTD" id="filter-vtd">
-                            <span class="checkmark"></span>
-                            Verbos Transitivos Diretos
-                        </label>
-                        <label class="custom-control checkbox">
-                            <input type="checkbox" checked data-filter="VTI" id="filter-vti">
-                            <span class="checkmark"></span>
-                            Verbos Transitivos Indiretos
-                        </label>
-                        <label class="custom-control checkbox">
-                            <input type="checkbox" checked data-filter="VTDI" id="filter-vtdi">
-                            <span class="checkmark"></span>
-                            Verbos Transitivos Diretos e Indiretos
-                        </label>
-                        <label class="custom-control checkbox">
-                            <input type="checkbox" checked data-filter="VI" id="filter-vi">
-                            <span class="checkmark"></span>
-                            Verbos Intransitivos
-                        </label>
-                    </div>
-                    
-                    <div class="dictionary-content">
-                        <div class="dictionary-letter" id="letter-A">
-                            <h3>A</h3>
-                            <div class="verb-items">
-                                <div class="verb-dictionary-item" data-type="VTD">
-                                    <span class="verb-name">Abrir</span>
-                                    <span class="verb-type">VTD</span>
-                                    <p>Exemplo: Ele <strong>abriu</strong> a porta.</p>
-                                </div>
-                                <div class="verb-dictionary-item" data-type="VTI">
-                                    <span class="verb-name">Acreditar</span>
-                                    <span class="verb-type">VTI (em)</span>
-                                    <p>Exemplo: Eu <strong>acredito</strong> em ti.</p>
-                                </div>
-                                <div class="verb-dictionary-item" data-type="VTDI">
-                                    <span class="verb-name">Agradecer</span>
-                                    <span class="verb-type">VTDI</span>
-                                    <p>Exemplo: Ele <strong>agradeceu</strong> o presente aos amigos.</p>
-                                </div>
-                                <div class="verb-dictionary-item" data-type="VI">
-                                    <span class="verb-name">Andar</span>
-                                    <span class="verb-type">VI</span>
-                                    <p>Exemplo: O bebé já <strong>anda</strong>.</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="dictionary-letter" id="letter-B">
-                            <h3>B</h3>
-                            <div class="verb-items">
-                                <div class="verb-dictionary-item" data-type="VTD">
-                                    <span class="verb-name">Beijar</span>
-                                    <span class="verb-type">VTD</span>
-                                    <p>Exemplo: Ela <strong>beijou</strong> o filho.</p>
-                                </div>
-                                <div class="verb-dictionary-item" data-type="VTD">
-                                    <span class="verb-name">Beber</span>
-                                    <span class="verb-type">VTD</span>
-                                    <p>Exemplo: Ele <strong>bebeu</strong> água.</p>
-                                </div>
-                                <div class="verb-dictionary-item" data-type="VI">
-                                    <span class="verb-name">Brilhar</span>
-                                    <span class="verb-type">VI</span>
-                                    <p>Exemplo: As estrelas <strong>brilham</strong> no céu.</p>
-                                </div>
-                                <div class="verb-dictionary-item" data-type="VI">
-                                    <span class="verb-name">Bocejar</span>
-                                    <span class="verb-type">VI</span>
-                                    <p>Exemplo: O rapaz <strong>bocejou</strong> durante a aula.</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="dictionary-letter" id="letter-C">
-                            <h3>C</h3>
-                            <div class="verb-items">
-                                <div class="verb-dictionary-item" data-type="VTD">
-                                    <span class="verb-name">Comprar</span>
-                                    <span class="verb-type">VTD</span>
-                                    <p>Exemplo: Nós <strong>comprámos</strong> um carro novo.</p>
-                                </div>
-                                <div class="verb-dictionary-item" data-type="VTI">
-                                    <span class="verb-name">Concordar</span>
-                                    <span class="verb-type">VTI (com)</span>
-                                    <p>Exemplo: Eles <strong>concordaram</strong> com a proposta.</p>
-                                </div>
-                                <div class="verb-dictionary-item" data-type="VTDI">
-                                    <span class="verb-name">Contar</span>
-                                    <span class="verb-type">VTDI</span>
-                                    <p>Exemplo: Ela <strong>contou</strong> a novidade aos pais.</p>
-                                </div>
-                                <div class="verb-dictionary-item" data-type="VI">
-                                    <span class="verb-name">Correr</span>
-                                    <span class="verb-type">VI</span>
-                                    <p>Exemplo: O atleta <strong>correu</strong> rapidamente.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="dictionary-alphabet">
-                        <ul>
-                            <li><a href="#letter-A">A</a></li>
-                            <li><a href="#letter-B">B</a></li>
-                            <li><a href="#letter-C">C</a></li>
-                            <li><a href="#letter-D">D</a></li>
-                            <li><a href="#letter-E">E</a></li>
-                            <li><a href="#letter-F">F</a></li>
-                            <li><a href="#letter-G">G</a></li>
-                            <li><a href="#letter-H">H</a></li>
-                            <li><a href="#letter-I">I</a></li>
-                            <li><a href="#letter-J">J</a></li>
-                            <li><a href="#letter-K">K</a></li>
-                            <li><a href="#letter-L">L</a></li>
-                            <li><a href="#letter-M">M</a></li>
-                            <li><a href="#letter-N">N</a></li>
-                            <li><a href="#letter-O">O</a></li>
-                            <li><a href="#letter-P">P</a></li>
-                            <li><a href="#letter-Q">Q</a></li>
-                            <li><a href="#letter-R">R</a></li>
-                            <li><a href="#letter-S">S</a></li>
-                            <li><a href="#letter-T">T</a></li>
-                            <li><a href="#letter-U">U</a></li>
-                            <li><a href="#letter-V">V</a></li>
-                            <li><a href="#letter-X">X</a></li>
-                            <li><a href="#letter-Z">Z</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
         <!-- Verbos Intransitivos -->
         <div id="verbos-intransitivos" class="tab-content">
             <div class="card">
@@ -2715,6 +2719,29 @@
                     <p>- O homem morreu <em>o quê?</em> (Não faz sentido - não há objeto direto)</p>
                     <p>- O homem morreu <em>a quem/de quem/para quem?</em> (Não faz sentido - não há objeto indireto)</p>
                     <p>Logo, "morrer" é um verbo intransitivo nesta frase.</p>
+                </div>
+                
+                <div class="sentence-builder">
+                    <h4>Construa uma frase com verbo intransitivo:</h4>
+                    <div class="word-bank" id="word-bank-intransitivo">
+                        <span class="word" draggable="true">O sol</span>
+                        <span class="word" draggable="true">A criança</span>
+                        <span class="word" draggable="true">O atleta</span>
+                        <span class="word verb" draggable="true">nasceu</span>
+                        <span class="word verb" draggable="true">correu</span>
+                        <span class="word verb" draggable="true">dormiu</span>
+                        <span class="word" draggable="true">cedo</span>
+                        <span class="word" draggable="true">rapidamente</span>
+                        <span class="word" draggable="true">profundamente</span>
+                        <span class="word" draggable="true">na praia</span>
+                        <span class="word" draggable="true">no parque</span>
+                        <span class="word" draggable="true">à tarde</span>
+                        <span class="word" draggable="true">durante horas</span>
+                        <span class="word" draggable="true">ontem</span>
+                    </div>
+                    <p>Monte a sua frase arrastando as palavras:</p>
+                    <div class="sentence-container" id="sentence-container-intransitivo"></div>
+                    <div id="sentence-feedback-intransitivo"></div>
                 </div>
             </div>
             
@@ -2862,67 +2889,6 @@
                     <p>- "O professor <span class="verb-highlight">fala</span> <span class="object-highlight">inglês</span>." (Verbo Transitivo Direto)</p>
                     <p>- "O professor <span class="verb-highlight">fala</span> <span class="preposition-highlight">sobre</span> <span class="object-highlight">literatura</span>." (Verbo Transitivo Indireto)</p>
                 </div>
-                
-                <div class="sentence-builder">
-                    <h4>Construa uma frase com verbo intransitivo:</h4>
-                    <div class="word-bank" id="word-bank-intransitivo">
-                        <span class="word" draggable="true">O sol</span>
-                        <span class="word" draggable="true">A criança</span>
-                        <span class="word" draggable="true">O atleta</span>
-                        <span class="word verb" draggable="true">nasceu</span>
-                        <span class="word verb" draggable="true">correu</span>
-                        <span class="word verb" draggable="true">dormiu</span>
-                        <span class="word" draggable="true">cedo</span>
-                        <span class="word" draggable="true">rapidamente</span>
-                        <span class="word" draggable="true">profundamente</span>
-                        <span class="word" draggable="true">na praia</span>
-                        <span class="word" draggable="true">no parque</span>
-                        <span class="word" draggable="true">à tarde</span>
-                        <span class="word" draggable="true">durante horas</span>
-                        <span class="word" draggable="true">ontem</span>
-                    </div>
-                    <p>Monte a sua frase arrastando as palavras:</p>
-                    <div class="sentence-container" id="sentence-container-intransitivo"></div>
-                    <div id="sentence-feedback-intransitivo"></div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h2>Particularidades dos Verbos Intransitivos</h2>
-                
-                <h3>Verbos Pronominais Intransitivos</h3>
-                <p>Alguns verbos intransitivos são usados com pronomes reflexivos, embora estes pronomes não funcionem como objetos.</p>
-                
-                <div class="example">
-                    <span class="example-title">Exemplos:</span>
-                    <p>- Eu <span class="verb-highlight">queixei-me</span> da dor. (O pronome "me" faz parte do verbo "queixar-se")</p>
-                    <p>- Nós <span class="verb-highlight">arrependemo-nos</span> da decisão. (O pronome "nos" faz parte do verbo "arrepender-se")</p>
-                    <p>- Ela <span class="verb-highlight">suicidou-se</span> ontem. (O pronome "se" faz parte do verbo "suicidar-se")</p>
-                </div>
-                
-                <h3>Verbos que Podem Ser Intransitivos ou Transitivos</h3>
-                <p>Muitos verbos podem funcionar como intransitivos ou transitivos, dependendo do contexto:</p>
-                
-                <div class="example">
-                    <span class="example-title">Verbos com dupla transitividade:</span>
-                    <p><strong>Estudar:</strong></p>
-                    <p>- Intransitivo: "Ela <span class="verb-highlight">estuda</span> todos os dias." (Não há objeto - a ação não passa para nenhum elemento)</p>
-                    <p>- Transitivo Direto: "Ela <span class="verb-highlight">estuda</span> <span class="object-highlight">matemática</span>." (Há um objeto direto - "matemática")</p>
-                    
-                    <p><strong>Comer:</strong></p>
-                    <p>- Intransitivo: "Já <span class="verb-highlight">comi</span> hoje." (Não há objeto específico)</p>
-                    <p>- Transitivo Direto: "Eu <span class="verb-highlight">comi</span> <span class="object-highlight">uma maçã</span>." (Há um objeto direto - "uma maçã")</p>
-                    
-                    <p><strong>Beber:</strong></p>
-                    <p>- Intransitivo: "Ele <span class="verb-highlight">bebe</span> muito." (Não há objeto específico)</p>
-                    <p>- Transitivo Direto: "Ele <span class="verb-highlight">bebeu</span> <span class="object-highlight">água</span>." (Há um objeto direto - "água")</p>
-                </div>
-                
-                <div class="alert alert-warning">
-                    <h4>Dica importante!</h4>
-                    <p>Quando um verbo que normalmente é transitivo aparece sem complemento, pode estar ocorrendo um caso de objeto direto implícito, subentendido pelo contexto. Nesses casos, o verbo continua a ser transitivo, apesar da ausência visível do objeto.</p>
-                    <p><strong>Exemplo:</strong> "Vou ler [um livro/algo] antes de dormir." (O objeto está implícito)</p>
-                </div>
             </div>
         </div>
         
@@ -2943,16 +2909,16 @@
                             <p>Identifique o tipo de verbo destacado na frase: "O aluno <strong>leu</strong> o livro com atenção."</p>
                             
                             <div class="options">
-                                <div class="option" data-correct="true" data-answer="VTD">
+                                <div class="option" data-correct="true">
                                     <p>Verbo Transitivo Direto</p>
                                 </div>
-                                <div class="option" data-answer="VTI">
+                                <div class="option">
                                     <p>Verbo Transitivo Indireto</p>
                                 </div>
-                                <div class="option" data-answer="VTDI">
+                                <div class="option">
                                     <p>Verbo Transitivo Direto e Indireto</p>
                                 </div>
-                                <div class="option" data-answer="VI">
+                                <div class="option">
                                     <p>Verbo Intransitivo</p>
                                 </div>
                             </div>
@@ -2969,16 +2935,16 @@
                             <p>Identifique o tipo de verbo destacado na frase: "Ela <strong>gosta</strong> de chocolate."</p>
                             
                             <div class="options">
-                                <div class="option" data-answer="VTD">
+                                <div class="option">
                                     <p>Verbo Transitivo Direto</p>
                                 </div>
-                                <div class="option" data-correct="true" data-answer="VTI">
+                                <div class="option" data-correct="true">
                                     <p>Verbo Transitivo Indireto</p>
                                 </div>
-                                <div class="option" data-answer="VTDI">
+                                <div class="option">
                                     <p>Verbo Transitivo Direto e Indireto</p>
                                 </div>
-                                <div class="option" data-answer="VI">
+                                <div class="option">
                                     <p>Verbo Intransitivo</p>
                                 </div>
                             </div>
@@ -2995,16 +2961,16 @@
                             <p>Identifique o tipo de verbo destacado na frase: "O professor <strong>explicou</strong> a matéria aos alunos."</p>
                             
                             <div class="options">
-                                <div class="option" data-answer="VTD">
+                                <div class="option">
                                     <p>Verbo Transitivo Direto</p>
                                 </div>
-                                <div class="option" data-answer="VTI">
+                                <div class="option">
                                     <p>Verbo Transitivo Indireto</p>
                                 </div>
-                                <div class="option" data-correct="true" data-answer="VTDI">
+                                <div class="option" data-correct="true">
                                     <p>Verbo Transitivo Direto e Indireto</p>
                                 </div>
-                                <div class="option" data-answer="VI">
+                                <div class="option">
                                     <p>Verbo Intransitivo</p>
                                 </div>
                             </div>
@@ -3021,16 +2987,16 @@
                             <p>Identifique o tipo de verbo destacado na frase: "O sol <strong>nasceu</strong> às seis horas."</p>
                             
                             <div class="options">
-                                <div class="option" data-answer="VTD">
+                                <div class="option">
                                     <p>Verbo Transitivo Direto</p>
                                 </div>
-                                <div class="option" data-answer="VTI">
+                                <div class="option">
                                     <p>Verbo Transitivo Indireto</p>
                                 </div>
-                                <div class="option" data-answer="VTDI">
+                                <div class="option">
                                     <p>Verbo Transitivo Direto e Indireto</p>
                                 </div>
-                                <div class="option" data-correct="true" data-answer="VI">
+                                <div class="option" data-correct="true">
                                     <p>Verbo Intransitivo</p>
                                 </div>
                             </div>
@@ -3047,147 +3013,17 @@
                             <p>Identifique o objeto na frase: "O estudante comprou um livro novo."</p>
                             
                             <div class="options">
-                                <div class="option" data-answer="O estudante">
+                                <div class="option">
                                     <p>O estudante</p>
                                 </div>
-                                <div class="option" data-answer="comprou">
+                                <div class="option">
                                     <p>comprou</p>
                                 </div>
-                                <div class="option" data-answer="um livro novo">
+                                <div class="option" data-correct="true">
                                     <p>um livro novo</p>
                                 </div>
-                                <div class="option" data-answer="novo">
+                                <div class="option">
                                     <p>novo</p>
-                                </div>
-                            </div>
-                            
-                            <div class="feedback"></div>
-                        </div>
-                        
-                        <button class="btn btn-primary next-btn">Próxima Questão</button>
-                    </div>
-                    
-                    <div class="exercise" data-exercise="6">
-                        <div class="question">
-                            <h3>Exercício 6</h3>
-                            <p>Identifique a preposição que acompanha o verbo na frase: "Nós acreditamos em ti."</p>
-                            
-                            <div class="options">
-                                <div class="option" data-answer="Nós">
-                                    <p>Nós</p>
-                                </div>
-                                <div class="option" data-answer="acreditamos">
-                                    <p>acreditamos</p>
-                                </div>
-                                <div class="option" data-answer="em">
-                                    <p>em</p>
-                                </div>
-                                <div class="option" data-answer="ti">
-                                    <p>ti</p>
-                                </div>
-                            </div>
-                            
-                            <div class="feedback"></div>
-                        </div>
-                        
-                        <button class="btn btn-primary next-btn">Próxima Questão</button>
-                    </div>
-                    
-                    <div class="exercise" data-exercise="7">
-                        <div class="question">
-                            <h3>Exercício 7</h3>
-                            <p>Classifique o verbo "dar" na frase: "Eu dei um presente à minha irmã."</p>
-                            
-                            <div class="options">
-                                <div class="option" data-answer="VTD">
-                                    <p>Verbo Transitivo Direto</p>
-                                </div>
-                                <div class="option" data-answer="VTI">
-                                    <p>Verbo Transitivo Indireto</p>
-                                </div>
-                                <div class="option" data-answer="VTDI">
-                                    <p>Verbo Transitivo Direto e Indireto</p>
-                                </div>
-                                <div class="option" data-answer="VI">
-                                    <p>Verbo Intransitivo</p>
-                                </div>
-                            </div>
-                            
-                            <div class="feedback"></div>
-                        </div>
-                        
-                        <button class="btn btn-primary next-btn">Próxima Questão</button>
-                    </div>
-                    
-                    <div class="exercise" data-exercise="8">
-                        <div class="question">
-                            <h3>Exercício 8</h3>
-                            <p>Identifique qual das seguintes frases contém um verbo intransitivo:</p>
-                            
-                            <div class="options">
-                                <div class="option" data-answer="A menina comeu uma maçã.">
-                                    <p>A menina comeu uma maçã.</p>
-                                </div>
-                                <div class="option" data-answer="O rapaz gosta de música.">
-                                    <p>O rapaz gosta de música.</p>
-                                </div>
-                                <div class="option" data-answer="O sol brilhou intensamente.">
-                                    <p>O sol brilhou intensamente.</p>
-                                </div>
-                                <div class="option" data-answer="Ela ofereceu um livro ao amigo.">
-                                    <p>Ela ofereceu um livro ao amigo.</p>
-                                </div>
-                            </div>
-                            
-                            <div class="feedback"></div>
-                        </div>
-                        
-                        <button class="btn btn-primary next-btn">Próxima Questão</button>
-                    </div>
-                    
-                    <div class="exercise" data-exercise="9">
-                        <div class="question">
-                            <h3>Exercício 9</h3>
-                            <p>Complete a frase com um objeto direto adequado: "O professor explicou ________."</p>
-                            
-                            <div class="options">
-                                <div class="option" data-answer="aos alunos">
-                                    <p>aos alunos</p>
-                                </div>
-                                <div class="option" data-answer="a matéria">
-                                    <p>a matéria</p>
-                                </div>
-                                <div class="option" data-answer="de matemática">
-                                    <p>de matemática</p>
-                                </div>
-                                <div class="option" data-answer="sobre o teste">
-                                    <p>sobre o teste</p>
-                                </div>
-                            </div>
-                            
-                            <div class="feedback"></div>
-                        </div>
-                        
-                        <button class="btn btn-primary next-btn">Próxima Questão</button>
-                    </div>
-                    
-                    <div class="exercise" data-exercise="10">
-                        <div class="question">
-                            <h3>Exercício 10</h3>
-                            <p>Analise a seguinte frase e selecione a opção correta: "As crianças dormiram profundamente."</p>
-                            
-                            <div class="options">
-                                <div class="option" data-answer="'profundamente' é um objeto direto.">
-                                    <p>"profundamente" é um objeto direto.</p>
-                                </div>
-                                <div class="option" data-answer="'profundamente' é um objeto indireto.">
-                                    <p>"profundamente" é um objeto indireto.</p>
-                                </div>
-                                <div class="option" data-answer="'profundamente' é um adjunto adverbial.">
-                                    <p>"profundamente" é um adjunto adverbial.</p>
-                                </div>
-                                <div class="option" data-answer="'profundamente' é o sujeito da frase.">
-                                    <p>"profundamente" é o sujeito da frase.</p>
                                 </div>
                             </div>
                             
@@ -3199,7 +3035,7 @@
                     
                     <div class="result-container" id="exercise-results">
                         <h3>Resultados</h3>
-                        <p>Você acertou <span class="score" id="exercise-score">0</span> de 10 questões!</p>
+                        <p>Você acertou <span class="score" id="exercise-score">0</span> de 5 questões!</p>
                         <div id="exercise-feedback"></div>
                         <button class="btn btn-primary" id="restart-exercises">Recomeçar Exercícios</button>
                     </div>
@@ -3256,3 +3092,209 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Quiz -->
+        <div id="quiz" class="tab-content">
+            <div class="card">
+                <h2>Quiz de Verbos Transitivos e Intransitivos</h2>
+                <p>Teste os seus conhecimentos num quiz rápido. Responda o mais rápido possível para ganhar mais pontos!</p>
+                
+                <div class="quiz-container">
+                    <div class="quiz-header">
+                        <div class="timer">Tempo: <span id="quiz-timer">60</span>s</div>
+                        <div class="quiz-score">Pontuação: <span id="current-score">0</span></div>
+                    </div>
+                    
+                    <div class="question-container">
+                        <h3 id="quiz-question">Aguardando início...</h3>
+                        
+                        <div class="quiz-options" id="quiz-options">
+                            <!-- As opções serão inseridas pelo JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div id="quiz-feedback" class="feedback"></div>
+                    
+                    <div class="quiz-controls">
+                        <button class="btn btn-primary" id="start-quiz">Iniciar Quiz</button>
+                        <button class="btn btn-primary" id="next-question" style="display: none;">Próxima Pergunta</button>
+                    </div>
+                    
+                    <div class="quiz-results" id="quiz-results" style="display: none;">
+                        <h3>Resultados do Quiz</h3>
+                        <p>Pontuação final: <span id="final-score">0</span></p>
+                        <p>Acertos: <span id="correct-answers">0</span>/<span id="total-questions">0</span></p>
+                        <button class="btn btn-primary" id="restart-quiz">Tentar Novamente</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Jogo -->
+        <div id="jogo" class="tab-content">
+            <div class="card">
+                <h2>Jogo da Memória: Verbos e Transitividade</h2>
+                <p>Encontre os pares correspondentes de verbos e suas classificações quanto à transitividade.</p>
+                
+                <div class="game-container">
+                    <div class="game-header">
+                        <div class="score">Tentativas: <span id="attempt-count">0</span></div>
+                        <div class="score">Pares encontrados: <span id="pair-count">0</span>/8</div>
+                    </div>
+                    
+                    <div class="game-board" id="memory-game">
+                        <!-- As cartas serão geradas pelo JavaScript -->
+                    </div>
+                    
+                    <div class="game-controls">
+                        <button class="btn btn-primary" id="start-game">Iniciar Jogo</button>
+                        <button class="btn btn-primary" id="restart-game" style="display: none;">Reiniciar Jogo</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Preencher Lacunas: Complementos Verbais</h2>
+                <p>Complete as frases com complementos adequados para os verbos, respeitando a sua transitividade.</p>
+                
+                <div class="fill-gaps-container">
+                    <div class="fill-gaps-exercise">
+                        <p>1. O professor explicou <input type="text" class="gap-input" data-answer="a matéria|matéria" placeholder="objeto direto"> <input type="text" class="gap-input" data-answer="aos alunos|para os alunos" placeholder="objeto indireto">.</p>
+                        
+                        <p>2. A menina gosta <input type="text" class="gap-input" data-answer="de chocolate|de doces" placeholder="objeto indireto">.</p>
+                        
+                        <p>3. O atleta <input type="text" class="gap-input" data-answer="correu|treinou|descansou" placeholder="verbo intransitivo"> rapidamente.</p>
+                        
+                        <p>4. Nós comprámos <input type="text" class="gap-input" data-answer="um presente|uma prenda|livros" placeholder="objeto direto"> para o aniversário.</p>
+                        
+                        <p>5. Ela <input type="text" class="gap-input" data-answer="ofereceu|deu|entregou" placeholder="VTDI"> flores à mãe.</p>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="check-gaps">Verificar Respostas</button>
+                    <div id="gaps-feedback" class="gaps-feedback"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dicionário -->
+        <div id="dicionario" class="tab-content">
+            <div class="card">
+                <h2>Dicionário de Verbos Transitivos e Intransitivos</h2>
+                <p>Consulte a transitividade de diversos verbos comuns em português europeu.</p>
+                
+                <div class="dictionary-container">
+                    <div class="dictionary-filters">
+                        <h3>Filtrar por tipo:</h3>
+                        <label class="custom-control checkbox">
+                            <input type="checkbox" checked data-filter="VTD" id="filter-vtd">
+                            <span class="checkmark"></span>
+                            Verbos Transitivos Diretos
+                        </label>
+                        <label class="custom-control checkbox">
+                            <input type="checkbox" checked data-filter="VTI" id="filter-vti">
+                            <span class="checkmark"></span>
+                            Verbos Transitivos Indiretos
+                        </label>
+                        <label class="custom-control checkbox">
+                            <input type="checkbox" checked data-filter="VTDI" id="filter-vtdi">
+                            <span class="checkmark"></span>
+                            Verbos Transitivos Diretos e Indiretos
+                        </label>
+                        <label class="custom-control checkbox">
+                            <input type="checkbox" checked data-filter="VI" id="filter-vi">
+                            <span class="checkmark"></span>
+                            Verbos Intransitivos
+                        </label>
+                    </div>
+                    
+                    <div class="dictionary-content">
+                        <div class="dictionary-letter" id="letter-A">
+                            <h3>A</h3>
+                            <div class="verb-items">
+                                <div class="verb-dictionary-item" data-type="VTD">
+                                    <span class="verb-name">Abrir</span>
+                                    <span class="verb-type">VTD</span>
+                                    <p>Exemplo: Ele <strong>abriu</strong> a porta.</p>
+                                </div>
+                                <div class="verb-dictionary-item" data-type="VTI">
+                                    <span class="verb-name">Acreditar</span>
+                                    <span class="verb-type">VTI (em)</span>
+                                    <p>Exemplo: Eu <strong>acredito</strong> em ti.</p>
+                                </div>
+                                <div class="verb-dictionary-item" data-type="VTDI">
+                                    <span class="verb-name">Agradecer</span>
+                                    <span class="verb-type">VTDI</span>
+                                    <p>Exemplo: Ele <strong>agradeceu</strong> o presente aos amigos.</p>
+                                </div>
+                                <div class="verb-dictionary-item" data-type="VI">
+                                    <span class="verb-name">Andar</span>
+                                    <span class="verb-type">VI</span>
+                                    <p>Exemplo: O bebé já <strong>anda</strong>.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="dictionary-letter" id="letter-B">
+                            <h3>B</h3>
+                            <div class="verb-items">
+                                <div class="verb-dictionary-item" data-type="VTD">
+                                    <span class="verb-name">Beijar</span>
+                                    <span class="verb-type">VTD</span>
+                                    <p>Exemplo: Ela <strong>beijou</strong> o filho.</p>
+                                </div>
+                                <div class="verb-dictionary-item" data-type="VTD">
+                                    <span class="verb-name">Beber</span>
+                                    <span class="verb-type">VTD</span>
+                                    <p>Exemplo: Ele <strong>bebeu</strong> água.</p>
+                                </div>
+                                <div class="verb-dictionary-item" data-type="VI">
+                                    <span class="verb-name">Brilhar</span>
+                                    <span class="verb-type">VI</span>
+                                    <p>Exemplo: As estrelas <strong>brilham</strong> no céu.</p>
+                                </div>
+                                <div class="verb-dictionary-item" data-type="VI">
+                                    <span class="verb-name">Bocejar</span>
+                                    <span class="verb-type">VI</span>
+                                    <p>Exemplo: O rapaz <strong>bocejou</strong> durante a aula.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="dictionary-letter" id="letter-C">
+                            <h3>C</h3>
+                            <div class="verb-items">
+                                <div class="verb-dictionary-item" data-type="VTD">
+                                    <span class="verb-name">Comprar</span>
+                                    <span class="verb-type">VTD</span>
+                                    <p>Exemplo: Nós <strong>comprámos</strong> um carro novo.</p>
+                                </div>
+                                <div class="verb-dictionary-item" data-type="VTI">
+                                    <span class="verb-name">Concordar</span>
+                                    <span class="verb-type">VTI (com)</span>
+                                    <p>Exemplo: Eles <strong>concordaram</strong> com a proposta.</p>
+                                </div>
+                                <div class="verb-dictionary-item" data-type="VTDI">
+                                    <span class="verb-name">Contar</span>
+                                    <span class="verb-type">VTDI</span>
+                                    <p>Exemplo: Ela <strong>contou</strong> a novidade aos pais.</p>
+                                </div>
+                                <div class="verb-dictionary-item" data-type="VI">
+                                    <span class="verb-name">Correr</span>
+                                    <span class="verb-type">VI</span>
+                                    <p>Exemplo: O atleta <strong>correu</strong> rapidamente.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 - Aplicação Educativa de Português Europeu. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>
